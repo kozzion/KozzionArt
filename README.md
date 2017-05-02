@@ -3,6 +3,7 @@ This repro contains some delightful computer art.
 Currently most of it is javascript. Which is a terrible language but gives results really quickly.
 
 
+
 ## Particle simulators
 The guys at CERN sure make some pretty pictures. We can also run some simulations with made up particles.
 Be warned that rendering can be slow especially for older links
@@ -27,3 +28,12 @@ Given n points in a 2d grid we can choose a random op these points to move towar
 Given a point at [0,0,1] applying random matrix transfomation can make intresting patterns. Barnsley fern is the most famous of these but really every collection of 3by3 matrixes with norms smaller than 1 works.
 
 (http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_2_0.html)
+
+
+## Acknowledgement
+Although most of the work is my own I could not have done is without my nerdy friends.
+Stijn Arnold
+Ward van Hoof
+Hugo Cox
+Bas Hickendorf
+
