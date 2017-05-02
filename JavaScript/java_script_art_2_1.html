@@ -20,12 +20,10 @@
         	var ctx = document.getElementById("myCanvas").getContext("2d");
             var canvasData = ctx.getImageData(0, 0, 800, 800);
             var time = 0;
-            var time_max = 50000;
             var state = [];  
             var cursor = [];  
             var id = 0;
-            var nParticle = 0;
-            
+            var pointsPerUpdate = 100;
      
             resetSimulation();      
    
@@ -37,7 +35,7 @@
             }
             
             function startSimulation() {
-                id = setInterval(frame, 5);
+                id = setInterval(nframeUpdate, 5);
             }
             
             function resetSimulation() {
@@ -46,6 +44,11 @@
                 time = 0;
                 document.getElementById("time_Display").innerHTML = time;
                 ctx.clearRect(0,0,800,800);
+                
+                for (var index = 0; index < canvasData.data.length; index++)
+                {
+                   canvasData.data[index] = 0;
+                }
                 ctx.moveTo(0, 0);
                 ctx.beginPath(); 
          
@@ -53,37 +56,40 @@
                 cursor = [];
                 render = [];
                 
-                render.push({a_0:400, a_1:600,   m_00: 50,   m_01: 0,    m_10: 0,    m_11: -50});        
-                state.push({a_0:0, a_1:0,    m_00: 0,    m_01: 0   , m_10: 0   , m_11: 0.16, sel_cdf:0.01});
-                state.push({a_0:0, a_1:1.60, m_00: 0.85, m_01: 0.04, m_10:-0.04, m_11: 0.85, sel_cdf:0.86});
-                state.push({a_0:0, a_1:1.60, m_00: 0.20, m_01:-0.26, m_10: 0.23, m_11: 0.22, sel_cdf:0.93});
-                state.push({a_0:0, a_1:0.44, m_00:-0.15, m_01: 0.28, m_10: 0.26, m_11: 0.24, sel_cdf:1.00});
+                render.push({a_0:400, a_1:600,            m_00: 50,   m_01: 0,    m_10: 0,    m_11: -50});        
+                state.push({a_0:0, a_1:0,                 m_00: 0,    m_01: 0   , m_10: 0   , m_11: Math.random(), sel_cdf:0.01});
+                state.push({a_0:0, a_1:1 + Math.random(), m_00: Math.random(), m_01: Math.random(), m_10:-Math.random(), m_11: Math.random(), sel_cdf:0.86});
+                state.push({a_0:0, a_1:1 + Math.random(), m_00: Math.random(), m_01:-Math.random(), m_10: Math.random(), m_11: Math.random(), sel_cdf:0.93});
+                state.push({a_0:0, a_1:Math.random(),     m_00:-Math.random(), m_01: Math.random(), m_10: Math.random(), m_11: Math.random(), sel_cdf:1.00});
                 cursor.push({pos_0:0, pos_1:0});
-                
-
-
             }
-
             
-            
-
-
-
+ 
             function frameStep() 
             {
+                frameUpdate();
+            }
+            
+            function nframeUpdate() 
+            {
+                for (var i = 0; i < pointsPerUpdate; i++)
+                {
+                    frame();
+                }
+                ctx.putImageData(canvasData, 0, 0);
+            }
+            
+            function frameUpdate() 
+            {
                 frame();
+                ctx.putImageData(canvasData, 0, 0);
             }
             
             function frame() 
             {
                 time++;       
                 document.getElementById("time_Display").innerHTML = time;
-                if (time_max < time)
-                {
-                    //Stop animation
-                    stopSimulation();
-                } 
-
+         
                 var temp = Math.random();
 
                 for (var i = 0; i < state.length; i++)
@@ -99,17 +105,11 @@
                         PaintBlack(render_x,  render_y);
                         break;
                     }                 
-                }
-        
-                // fastDraw
-                ctx.stroke();
+                }    
             }
             
             
-            function updateCanvas() {
-                ctx.putImageData(canvasData, 0, 0);
-            }
-            
+    
             function PaintBlack(x, y)
             {
                 var index = (Math.floor(x) + Math.floor(y) * 800) * 4;
@@ -117,7 +117,6 @@
                 canvasData.data[index + 1] = 0;
                 canvasData.data[index + 2] = 0;
                 canvasData.data[index + 3] = 255;
-                updateCanvas();
             }
 
 			// That's how you define the value of a pixel //
@@ -127,7 +126,6 @@
                 canvasData.data[index + 1] = g;
                 canvasData.data[index + 2] = b;
                 canvasData.data[index + 3] = a;
-                updateCanvas();
 			}
         </script>        
     </body>

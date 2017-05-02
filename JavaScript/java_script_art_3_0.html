@@ -8,18 +8,20 @@
     <body>
         <canvas id="myCanvas" width="800" height="800" style="border:1px solid #000000;">
         </canvas>
-        <button onclick='startSimulation()'>Start</button>
-        <button onclick='stopSimulation()'>Stop</button>
-        <button onclick='frameStep()'>Frame</button>
-        <button onclick='resetSimulation()'>Reset</button>
+        <button onclick='render()'>Start</button>
+        <button onclick='reset()'>Reset</button>
         
         <div id="time_Display">time</div>
         
         <script type="text/javascript">
                  
         	var ctx = document.getElementById("myCanvas").getContext("2d");
-            var canvasData = ctx.getImageData(0, 0, 800, 800);
-            var time = 0;
+            var canvas_size_0 = document.getElementById("myCanvas"); 
+            var canvas_size_1 =document.getElementById("myCanvas");
+            
+            var canvasData = ctx.getImageData(0, 0, canvas_size_0, canvas_size_1);
+            var piles = [canvas_size_0, canvas_size_1];
+            var index_0_start
             var time_max = 50000;
             var state = [];  
             var cursor = [];  
@@ -27,20 +29,29 @@
             var nParticle = 0;
             
      
-            resetSimulation();      
+            reset();      
    
    
             //window.alert(particles.length);
   
-            function stopSimulation() {
-                clearInterval(id);
+            function stopSimulation() 
+            {
+
             }
             
-            function startSimulation() {
-                id = setInterval(frame, 5);
+            function render() 
+            {
+                
+
             }
             
-            function resetSimulation() {
+            function checkPile(index)
+            {
+                var index_x = index % canvas_size_0;
+                var index_y = index / canvas_size_0;
+            }
+            
+            function reset() {
                  //Clear animation
                 clearInterval(id);
                 time = 0;
@@ -60,7 +71,6 @@
                 state.push({a_0:0, a_1:0.44, m_00:-0.15, m_01: 0.28, m_10: 0.26, m_11: 0.24, sel_cdf:1.00});
                 cursor.push({pos_0:0, pos_1:0});
                 
-
 
             }
 

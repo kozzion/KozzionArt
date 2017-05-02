@@ -5,14 +5,19 @@ Currently most of it is javascript. Which is a terrible language but gives resul
 
 
 ## Particle simulators
+
+### Magnetic Field Curls
 The guys at CERN sure make some pretty pictures. We can also run some simulations with made up particles.
 Be warned that rendering can be slow especially for older links
+
 (http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_0_0.html)
 (http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_0_1.html)
 (http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_0_2.html)
 (http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_0_3.html)
 (http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_0_4.html)
 (http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_0_5.html)
+
+
 
 ## Factal attractors
 These projects are inspired by a systems phenomenen called a an attractor state. This is a state towards which proceses in that state tend to converge. While usually attractors are boring lines or circles we can do some intresting things with them. 
@@ -30,10 +35,16 @@ Given a point at [0,0,1] applying random matrix transfomation can make intrestin
 (http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_2_0.html)
 
 
+We can also randomize these matrixes so we get the entire space of shapes (press start and reset a bunch of times)
+
+(http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_2_1.html)
+
+
+## Sandpiles
+Inspired by a numberphile videos on sandpile i wrote some javascrip code to render some awesome ones.
+
+
+
 ## Acknowledgement
-Although most of the work is my own I could not have done is without my nerdy friends.
-Stijn Arnold
-Ward van Hoof
-Hugo Cox
-Bas Hickendorf
+Although most of the work is my own I could not have done is without my nerdy friends: Stijn Arnold, Ward van Hoof, Hugo Cox, Bas Hickendorf
 
