@@ -1,0 +1,143 @@
+<html>
+    <head>
+        <title>Canvas</title>
+        <script type="text/javascript">
+
+        </script>
+    </head>
+    <body>
+        <canvas id="myCanvas" width="800" height="800" style="border:1px solid #000000;">
+        </canvas>
+        <button onclick='startSimulation()'>Start</button>
+        <button onclick='stopSimulation()'>Stop</button>
+        <button onclick='frameStep()'>Frame</button>
+        <button onclick='resetSimulation()'>Reset</button>
+        
+        <div id="time_Display">time</div>
+        
+        <script type="text/javascript">
+            var canvas = document.getElementById("myCanvas") 
+            var canvas_size_x = canvas.width;
+            var canvas_size_y = canvas.height;
+        	var ctx = document.getElementById("myCanvas").getContext("2d");       
+            var canvasData = ctx.getImageData(0, 0, canvas_size_x, canvas_size_y);
+            var time = 0;
+            var cursor = [];  
+            var render = [];
+            var id = 0;
+            var pointsPerUpdate = 100;
+            var fraction = 1.00;
+ 
+            resetSimulation();      
+            startSimulation();
+            function stopSimulation() {
+                clearInterval(id);
+            }
+            
+            function startSimulation() {
+                id = setInterval(nframeUpdate, 5);
+            }
+            
+            function resetSimulation() {
+                 //Clear animation
+                clearInterval(id);
+                time = 0;
+                document.getElementById("time_Display").innerHTML = time;
+                ctx.clearRect(0,0,800,800);
+                
+                for (var index = 0; index < canvasData.data.length; index++)
+                {
+                   canvasData.data[index] = 0;
+                }
+                ctx.moveTo(0, 0);
+                ctx.beginPath(); 
+                     
+                cursor = [];
+                render = [];
+                
+                render.push({a_0: 800, a_1:0, m_00:0,   m_01: -800,    m_10: 800,    m_11:0});        
+                cursor.push({pos_0:0, pos_1:0});
+            }
+            
+ 
+            function frameStep() 
+            {
+                frameUpdate();
+            }
+            
+            function nframeUpdate() 
+            {
+                for (var i = 0; i < pointsPerUpdate; i++)
+                {
+                    frame();
+                }
+                ctx.putImageData(canvasData, 0, 0);
+            }
+            
+            function frameUpdate() 
+            {
+                frame();
+                ctx.putImageData(canvasData, 0, 0);
+            }
+            
+            function frame() 
+            {
+                time++;       
+                document.getElementById("time_Display").innerHTML = time;
+         
+                var r = Math.random() * fraction;
+
+       
+                cursor[0].pos_0 = 2.5 + (r * 1.5);
+                //TODO non uniform sampleing
+                cursor[0].pos_1 = Math.random();  
+
+                
+                
+                for (var i = 0; i < 1000; i++)
+                {               
+                    cursor[0].pos_1 = cursor[0].pos_0 * cursor[0].pos_1 * (1 - cursor[0].pos_1)
+                }    
+                cursor[0].pos_0  = ((cursor[0].pos_0  -2.5 )/ 1.5) / fraction;
+      
+                var render_x = render[0].a_0 + cursor[0].pos_0 * render[0].m_00 + cursor[0].pos_1 * render[0].m_01;
+                var render_y = render[0].a_1 + cursor[0].pos_0 * render[0].m_10 + cursor[0].pos_1 * render[0].m_11;
+                PaintBlack(render_x,  render_y);
+    
+            }
+            
+            
+    
+            function PaintBlack(x, y)
+            {
+                console.log(x)
+                console.log(y)
+                if((x < 0) ||(canvas_size_x <= x) )
+                {
+                    return;
+                }
+                
+                if((y < 0) ||(canvas_size_y <= y))
+                {
+                    return;
+                }
+            
+                var index = (Math.floor(x) + (canvas_size_y - Math.floor(y)) * canvas_size_y) * 4;
+                canvasData.data[index + 0] = 0;
+                canvasData.data[index + 1] = 0;
+                canvasData.data[index + 2] = 0;
+                canvasData.data[index + 3] = 255;
+            }
+
+			// That's how you define the value of a pixel //
+			function drawPixel(x, y, r, g, b, a) {
+                var index = (x + y * 800) * 4;
+                canvasData.data[index + 0] = r;
+                canvasData.data[index + 1] = g;
+                canvasData.data[index + 2] = b;
+                canvasData.data[index + 3] = a;
+			}
+        </script>        
+    </body>
+</html>
+

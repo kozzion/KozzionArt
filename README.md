@@ -20,7 +20,7 @@ Be warned that rendering can be slow especially for older links
 
 
 ## Factal attractors
-These projects are inspired by a systems phenomenen called a an attractor state. This is a state towards which proceses in that state tend to converge. While usually attractors are boring lines or circles we can do some intresting things with them. 
+These projects are inspired by a systems phenomenen called a an attractor state. This is a state towards which proceses in that state tend to converge. While usually attractors are boring lines or circles sometimes they have a chaotic or fractal properties.
 
 
 ### Random homing points
@@ -38,6 +38,20 @@ Given a point at [0,0,1] applying random matrix transfomation can make intrestin
 We can also randomize these matrixes so we get the entire space of shapes (press start and reset a bunch of times)
 
 (http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_2_1.html)
+
+
+
+### Logistic map
+Given equation x_n+1 = rx_n(1- x_n) results in a fractal attractor
+
+(http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_4_0.html)
+(http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_4_1.html)
+If we zoom and change the sampling and transform som of the axis:
+(http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_4_2.html)
+
+
+### N-Body equations
+Gravitational attraction with more than 2 bodies can also result in chaotic systems. Using a runge kutta method some of the smaller systems are quite eazy to simulate.
 
 
 ## Sandpiles
