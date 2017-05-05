@@ -52,6 +52,9 @@ If we zoom and change the sampling and transform som of the axis:
 
 ### N-Body equations
 Gravitational attraction with more than 2 bodies can also result in chaotic systems. Using a runge kutta method some of the smaller systems are quite eazy to simulate.
+These two are not that intresting yet a singele attracting point and other orbiting it.
+(http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_5_0.html)
+(http://htmlpreview.github.io/?https://github.com/kozzion/KozzionArt/blob/master/JavaScript/java_script_art_5_1.html)
 
 
 ## Sandpiles
