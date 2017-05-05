@@ -35,7 +35,7 @@
             }
             
             function startSimulation() {
-                id = setInterval(nframeUpdate, 5);
+                id = setInterval(nframeUpdate, 10);
             }
             
             function resetSimulation() {
@@ -92,21 +92,23 @@
      
                 cursor[0].pos_1 = Math.random();  
 
-                
-                
+                //https://mathematica.stackexchange.com/questions/13277/mathematica-code-for-bifurcation-diagram
+                //http://geoffboeing.com/2015/03/chaos-theory-logistic-map/
                 for (var i = 0; i < 1000; i++)
                 {               
                     cursor[0].pos_1 = cursor[0].pos_0 * cursor[0].pos_1 * (1 - cursor[0].pos_1)
                 }    
                 cursor[0].pos_0  = ((cursor[0].pos_0  -2.5 )/ 1.5);
                 cursor[0].pos_0 /=  fraction;
-                cursor[0].pos_0 = 1 - Math.sqrt(1 - Math.pow(cursor[0].pos_0,render_pow)) //Non uniform rendering
-                
+                var temp_0 = (Math.exp(cursor[0].pos_0, 2) /  Math.exp(fraction, 2)) - 1; //Non uniform rendering
+                var temp_1 = cursor[0].pos_0;//Non uniform rendering
                
-                var render_x = render[0].a_0 + cursor[0].pos_0 * render[0].m_00 + cursor[0].pos_1 * render[0].m_01;
-                var render_y = render[0].a_1 + cursor[0].pos_0 * render[0].m_10 + cursor[0].pos_1 * render[0].m_11;
+                var render_x = render[0].a_0 + temp_0 * render[0].m_00 + cursor[0].pos_1 * render[0].m_01;
+                var render_y = render[0].a_1 + temp_0 * render[0].m_10 + cursor[0].pos_1 * render[0].m_11;
                 PaintBlack(render_x,  render_y);
-    
+                
+
+//    
             }
             
             
