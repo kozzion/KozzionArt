@@ -1,0 +1,204 @@
+<html>
+    <head>
+        <title>Canvas</title>
+        <script type="text/javascript">
+
+        </script>
+    </head>
+    <body>
+        <canvas id="display_canvas" width="800" height="800"/>
+        <button onclick='startSimulation()'>Start</button>
+        <button onclick='frameStep()'>Frame</button>
+        <button onclick='resetSimulation()'>Reset</button>
+        
+        <div id="display_time">time</div>
+        
+        <script type="text/javascript">
+                 
+            var canvas = document.getElementById("display_canvas") ;
+            var display_time =  document.getElementById("display_time");
+            var canvas_size_x = canvas.width;
+            var canvas_size_y = canvas.height;
+        	var ctx = canvas.getContext("2d");       
+            var canvasData = ctx.getImageData(0, 0, canvas_size_x, canvas_size_y);
+            var time = 0;
+            var particle_array = [];  
+            var render_matrix = [];
+            var id = 0;
+            var time_step = 0.1;
+            resetSimulation();      
+            startSimulation();
+            
+
+            
+            //window.alert(particles.length);
+            
+            function startSimulation() {
+                id = setInterval(frame, 5);
+            }
+            
+            function resetSimulation() {
+                 //Clear animation
+                clearInterval(id);   
+                ctx.clearRect(0, 0, canvas_size_x, canvas_size_y);
+                ctx.moveTo(0, 0);
+                ctx.beginPath();                
+                time = 0;
+                display_time.innerHTML = time;
+                var particle_array = [];  
+                var render_matrix = {m_00:0, m_01:0, m_02:0, m_10:0, m_11:0, m_12:0 };
+                spawnParticle('start', 0, 0.5, 0, 1, 0);
+            }
+
+            function updateNAndRender() 
+            {
+                for (var i = 0; i < 100; i++)
+                {
+                     update();
+                }
+                render();
+            }
+            
+            function update() 
+            {
+                time += time_step;   
+                
+                //Do Particle
+                for (var i = 0; i < particle_array.length; i++)
+                {
+                    particles[i].life -= time_step;
+                    if(0 < particle_array[i].life)
+                    {
+                        // Do velocity
+                        particle_array[i].vel_0_curr += particles[i].charge * (particles[i].vel_y - particles[i].res_x);
+                        particle_array[i].vel_1_curr += -particles[i].charge * (particles[i].vel_x - particles[i].res_y);                
+                        
+                        // Do position
+                        particle_array[i].pos_0_curr += particles[i].vel_0_curr;
+                        particle_array[i].pos_1_curr += particles[i].vel_1_curr; 
+                    }
+                    else
+                    {
+                        if(particles[i].isAlive)
+                        {         
+                            killParticle(particle_array[i]);
+                        }             
+                    }
+                }
+            }
+            
+            function render() 
+            {
+                display_time.innerHTML = time;
+                for (var i = 0; i < particle_array.length; i++)
+                {
+                    if(!particle_array[i].isAlive)
+                    { 
+                        var render_x_prev = 
+                            (particle_array[i].pos_0_prev * render_matrix.m_00) + 
+                            (particle_array[i].pos_1_prev * render_matrix.m_01) + 
+                            (particle_array[i].pos_2_prev * render_matrix.m_02);
+                        var render_y_prev = 
+                            (particle_array[i].pos_0_prev * render_matrix.m_10) + 
+                            (particle_array[i].pos_1_prev * render_matrix.m_11) + 
+                            (particle_array[i].pos_2_prev * render_matrix.m_12);
+                        
+                        var render_x_curr = 
+                            (particle_array[i].pos_0_curr * render_matrix.m_00) + 
+                            (particle_array[i].pos_1_curr * render_matrix.m_01) + 
+                            (particle_array[i].pos_2_curr * render_matrix.m_02);
+                        var render_y_curr =
+                            (particle_array[i].pos_0_curr * render_matrix.m_10) + 
+                            (particle_array[i].pos_1_curr * render_matrix.m_11) + 
+                            (particle_array[i].pos_2_curr * render_matrix.m_12);
+                        
+                        particle_array[i].pos_0_prev = particle_array[i].pos_0_curr;
+                        particle_array[i].pos_1_prev = particle_array[i].pos_1_curr;
+                        particle_array[i].pos_2_prev = particle_array[i].pos_2_curr;
+                        
+                        particle_array[i].vel_0_prev = particle_array[i].vel_0_curr;
+                        particle_array[i].vel_1_prev = particle_array[i].vel_1_curr;
+                        particle_array[i].vel_2_prev = particle_array[i].vel_2_curr;
+                        
+                        ctx.moveTo(render_x_prev, render_y_prev);
+                        ctx.lineTo(render_x_curr, render_y_curr); 
+                    }
+                }
+                // fastDraw
+                ctx.stroke();
+            }
+            
+                   
+            function spawnParticle(type, pos_0, pos_1, vel_0, vel_1) 
+            {  
+                var res_x = 0;
+                var res_y = 0;
+                var charge = 0;
+                var life = 0;
+                switch(type)
+                {
+                     case "start":
+                        res_x = 0.05;
+                        res_y = 0.00;
+                        charge = 0.00;
+                        life = (Math.random() * 100);
+                        //result {"left", "right"}
+                        break;
+                     case "left":  
+                        charge = 0.07;
+                        res_x = (Math.random() - 0.5) * (Math.random());
+                        res_y = (Math.random() - 0.5) * (Math.random());
+                        life = (Math.random() * 600);
+                        break;
+                     case "right":  
+                        charge = -0.065;
+                        res_x = (Math.random() - 0.5) * (Math.random());
+                        res_y = (Math.random() - 0.5) * (Math.random());
+                        life = (Math.random() * 600);
+                        break;                       
+                              
+                }
+                particles.push({type:type,
+                                pos_0_curr:pos_0,pos_1_curr:pos_1,pos_2_curr:1
+                                vel_1_curr:vel_x,vel_y:vel_y,res_x:res_x,res_y:res_y,mass:mass,charge:charge,life:life,isDead:false});
+            }
+            
+            function killParticle(particle) 
+            {
+                particle.isAlive = false;
+                switch(particle.type)
+                {
+                     case "start":
+                        var left_fraction = Math.random();
+                        var left_mass = particle.mass * left_fraction;
+                        var right_mass = particle.mass * (1 - left_fraction);
+                        console.log(left_mass);
+                        console.log(right_mass);
+                        if (0.1 < left_mass) { spawnParticle('left', particle.pos_x, particle.pos_y, particle.vel_x, particle.vel_y, left_mass, 0); }
+                        if (0.1 < right_mass) { spawnParticle('right', particle.pos_x, particle.pos_y, particle.vel_x, particle.vel_y, right_mass, 0); }
+                        break;
+                     case "left": 
+                        var left_fraction = Math.random();
+                        var left_mass = particle.mass * left_fraction;
+                        var right_mass = particle.mass * (1 - left_fraction);
+                        console.log(left_mass);
+                        console.log(right_mass);
+                        if (0.1 < left_mass) { spawnParticle('left', particle.pos_x, particle.pos_y, particle.vel_x, particle.vel_y, left_mass, 0); }
+                        if (0.1 < right_mass) { spawnParticle('right', particle.pos_x, particle.pos_y, particle.vel_x, particle.vel_y, right_mass, 0); }
+                        break;
+                     case "right": 
+                        var left_fraction = Math.random();
+                        var left_mass = particle.mass * left_fraction;
+                        var right_mass = particle.mass * (1 - left_fraction);
+                        console.log(left_mass);
+                        console.log(right_mass);
+                        if (0.1 < left_mass) { spawnParticle('left', particle.pos_x, particle.pos_y, particle.vel_x, particle.vel_y, left_mass, 0); }
+                        if (0.1 < right_mass) { spawnParticle('right', particle.pos_x, particle.pos_y, particle.vel_x, particle.vel_y, right_mass, 0); }
+                        break;
+                }
+            }
+         
+        </script>        
+    </body>
+</html>
+

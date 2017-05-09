@@ -1,0 +1,256 @@
+<html>
+    <head>
+        <title>Canvas</title>
+        <script type="text/javascript">
+
+        </script>
+    </head>
+    <body>
+        <canvas id="canvas" width="800" height="800">
+        </canvas>
+        <button onclick='startProcess()'>Start</button>
+        <button onclick='stopProcess()'>Stop</button>
+        <button onclick='updateAndRender()'>Frame</button>
+        <button onclick='resetProcess()'>Reset</button>
+        
+        <div id="display_time_index">time</div>
+        
+        <script type="text/javascript">
+            var canvas = document.getElementById("canvas") 
+            var context = canvas.getContext("2d");  
+            var displayTimeIndex =  document.getElementById("display_time_index")
+            var canvasSizeX = canvas.width;
+            var canvasSizeY = canvas.height;     
+            var canvasData = context.getImageData(0, 0, canvasSizeX, canvasSizeY);
+   
+            var time_index = 0;
+            var body_array = [];  
+            var particle_array = [];  
+            var render_matrix = [];
+            var id = 0;
+            var updatesPerRender = 1;
+            
+            resetProcess();
+            render();
+            //startProcess();
+            
+            function stopProcess() {
+                clearInterval(id);
+            }
+            
+            function startProcess() {
+                id = setInterval(updateNAndRender, 5);
+            }
+            
+            function resetProcess() {
+                 //Clear animation
+                clearInterval(id);
+                time_index = 0;
+         
+                //Clear canvas data
+                for (var index = 0; index < canvasData.data.length; index++)
+                {
+                   canvasData.data[index] = 0;
+                }
+                
+                //Clear context
+                context.clearRect(0, 0, canvasSizeX, canvasSizeY);
+                context.moveTo(0, 0); //TODO this could be more neath
+                context.beginPath(); 
+                     
+                particle_array = [];
+                transform_array = [];
+                render_matrix = []; 
+ 
+                particle_array.push({
+                                parent_index:-1,
+                                pos_0:0, pos_1:0, pos_2:0, pos_3:1,
+                                red:0,green:0,blue:0});
+
+                particle_array.push({
+                                parent_index:0,
+                                pos_0:1, pos_1:0, pos_2:0, pos_3:1,
+                                red:0,green:0,blue:0});   
+                
+                transform_array.push({
+                     m_00:0,   m_01:-1/2, m_02:0,
+                     m_10:1/2, m_11: 0,   m_12:0,
+                     m_20:0,   m_21: 0,   m_22:0});             
+                
+                transform_array.push({
+                     m_00:2/4, m_01:-1/2, m_02:0,
+                     m_10:1/2, m_11: 2/4, m_12:0,
+                     m_20:0,   m_21:0,    m_22:0}); 
+                
+                transform_array.push({
+                     m_00: 2/4, m_01:0,   m_02:0,
+                     m_10: 0,   m_11:2/4, m_12:0,
+                     m_20: 0,   m_21:0,   m_22:0}); 
+                
+                render_matrix = {m_00:400,   m_01:0 ,m_02: 0, m_03: 200,  
+                                 m_10:0,   m_11:400 ,m_12: 0, m_13: 200};
+            }
+            
+ 
+            function updateNAndRender() 
+            {
+                for (var i = 0; i < updatesPerRender; i++)
+                {
+                    update();
+                }  
+                render();
+            }
+            
+            function updateAndRender() 
+            {
+                update();
+                render();
+            }
+            
+            function update() 
+            {   
+                time_index += 1;  
+                console.log(particle_array.length)
+                var old_particle_array = particle_array; //Don't iterate over new particles
+                particle_array = [];
+                
+                particle_array.push({
+                    pos_0:old_particle_array[0].pos_0,
+                    pos_1:old_particle_array[0].pos_1,
+                    pos_2:old_particle_array[0].pos_2,
+                    pos_3:1,
+                    red:0,green:0,blue:0});
+                
+                for (var i = 1; i < old_particle_array.length; i++)
+                {                      
+                    var dif_0 = old_particle_array[i].pos_0 - old_particle_array[i - 1].pos_0;
+                    var dif_1 = old_particle_array[i].pos_1 - old_particle_array[i - 1].pos_1;
+                    var dif_2 = old_particle_array[i].pos_2 - old_particle_array[i - 1].pos_2;
+                    
+                    for (var t = 0; t < transform_array.length; t++)
+                    { 
+                        //Update position newton style
+                        var pos_0 = 
+                            old_particle_array[i - 1].pos_0 + 
+                            dif_0 * transform_array[t].m_00 + 
+                            dif_1 * transform_array[t].m_01 +
+                            dif_2 * transform_array[t].m_02;
+                        var pos_1 =  
+                            old_particle_array[i - 1].pos_1 + 
+                            dif_0 * transform_array[t].m_10 + 
+                            dif_1 * transform_array[t].m_11 +
+                            dif_2 * transform_array[t].m_12;
+                        var pos_2 =  
+                            old_particle_array[i - 1].pos_2 + 
+                            dif_0 * transform_array[t].m_20 + 
+                            dif_1 * transform_array[t].m_21 +
+                            dif_2 * transform_array[t].m_22;
+                        
+                        
+                        particle_array.push({
+                            pos_0:pos_0, 
+                            pos_1:pos_1, 
+                            pos_2:pos_2, 
+                            pos_3:1,
+                            red:0,green:0,blue:0});
+                    }
+                    
+                    
+                    particle_array.push({
+                                pos_0:old_particle_array[i].pos_0,
+                                pos_1:old_particle_array[i].pos_1,
+                                pos_2:old_particle_array[i].pos_2,
+                                pos_3:1,
+                                red:0,green:0,blue:0});                   
+                }    
+            }
+            
+               
+            function render() 
+            {
+
+                displayTimeIndex.innerHTML = time_index;   
+                for (var i = 1; i < particle_array.length; i++)
+                {               
+                    var render_x = 
+                        particle_array[i].pos_0 * render_matrix.m_00 + 
+                        particle_array[i].pos_1 * render_matrix.m_01 +
+                        particle_array[i].pos_2 * render_matrix.m_02 +
+                        particle_array[i].pos_3 * render_matrix.m_03;
+                    var render_y = 
+                        particle_array[i].pos_0 * render_matrix.m_10 + 
+                        particle_array[i].pos_1 * render_matrix.m_11 +
+                        particle_array[i].pos_2 * render_matrix.m_12 +
+                        particle_array[i].pos_3 * render_matrix.m_13;   
+                    PaintColor(render_x,  render_y, particle_array[i].red, particle_array[i].green, particle_array[i].blue, 255); // TODO stroke using the prev values  
+                } 
+                
+            
+                context.putImageData(canvasData, 0, 0);
+            }
+            
+            
+    
+            function PaintBlack(x, y)
+            {
+      
+                if((x < 0) ||(canvasSizeX <= x) )
+                {
+                    return;
+                }
+                
+                if((y < 0) ||(canvasSizeY <= y))
+                {
+                    return;
+                }
+                var index = (Math.floor(x) + (canvasSizeY - Math.floor(y)) * canvasSizeX) * 4;
+                canvasData.data[index + 0] = 0;
+                canvasData.data[index + 1] = 0;
+                canvasData.data[index + 2] = 0;
+                canvasData.data[index + 3] = 255;
+            }
+            
+            
+            function PaintBlue(x, y)
+            {
+      
+                if((x < 0) ||(canvasSizeX <= x) )
+                {
+                    return;
+                }
+                
+                if((y < 0) ||(canvasSizeY <= y))
+                {
+                    return;
+                }
+  
+                var index = (Math.floor(x) + (canvasSizeY - Math.floor(y)) * canvasSizeX) * 4;
+                canvasData.data[index + 0] = 0;
+                canvasData.data[index + 1] = 0;
+                canvasData.data[index + 2] = 255;
+                canvasData.data[index + 3] = 255;
+            }
+
+			// That's how you define the value of a pixel //
+			function PaintColor(x, y, r, g, b, a) 
+            {
+                if((x < 0) ||(canvasSizeX <= x) )
+                {
+                    return;
+                }
+                
+                if((y < 0) ||(canvasSizeY <= y))
+                {
+                    return;
+                }
+                
+                var index = (Math.floor(x) + (canvasSizeY - Math.floor(y)) * canvasSizeX) * 4;
+                canvasData.data[index + 0] = r;
+                canvasData.data[index + 1] = g;
+                canvasData.data[index + 2] = b;
+                canvasData.data[index + 3] = a;
+			}
+        </script>        
+    </body>
+</html>
+
